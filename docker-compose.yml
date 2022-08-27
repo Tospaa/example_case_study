@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  db:
+    image: "postgres:12.5"
+    restart: "always"
+    volumes:
+      - "./docker_data/postgresql:/var/lib/postgresql/data"
+    ports:
+      - "3306:3306"
+    environment:
+      POSTGRES_PASSWORD: P@ssword!123
+      POSTGRES_USER: tospaa
+      POSTGRES_DB: enquireai
+
+  ingester:
+    image: "python:3.10.6-bullseye"
+    restart: "always"
+    command: tail -f /dev/null  # keep this image running indefinitely
+    volumes:
+      - "./ingester:/usr/src/ingester"
+    
+
+  # ui:
+  #   image: "redis:6.2.5"
+  #   restart: "always"
+  #   volumes:
+  #     - "./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro"
+  #   ports:
+  #     - "6379:6379"
+  #   command: "redis-server /usr/local/etc/redis/redis.conf"
+
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #     - "49558:49558"
+  #   environment:
+  #     - JAVA_ARGS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:49558 -Dfile.encoding=UTF-8
+  #     - SPRING_CONFIG=devcontainer
+  #   depends_on:
+  #     - db
+  #     - redis
