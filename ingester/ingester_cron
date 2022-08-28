@@ -1,0 +1,2 @@
+# Run everyday at 04:00 AM
+0 4 * * * bash -l -c "/usr/src/ingester/ingester_cron_script.sh" >> /usr/src/ingester/cron.log 2>&1

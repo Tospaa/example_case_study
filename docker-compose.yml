@@ -15,9 +15,6 @@ services:
       context: ./ingester
       dockerfile: Dockerfile
     restart: "always"
-    command: tail -f /dev/null  # keep this image running indefinitely
-    volumes:
-      - "./ingester:/usr/src/ingester"
     env_file: .env
 
   # ui:

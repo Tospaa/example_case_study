@@ -10,7 +10,14 @@ class Ingester:
     INSERT INTO news (
       id, title, summary, link, published, inserted, img_url, ticker
     ) VALUES (
-      %s, %s, %s, %s, %s, now (), %s, %s
+      %s::varchar(512),
+      %s::varchar(512),
+      %s::varchar(2048),
+      %s::varchar(512),
+      %s,
+      now (),
+      %s::varchar(512),
+      %s
     )
   """
   DATABASE_FETCH_IDS = 'SELECT id FROM news'
@@ -23,12 +30,18 @@ class Ingester:
   MEDIA_CONTENT = 'media_content'
   URL = 'url'
   TOPIC = 'topic'
+  SHOULD_LOG = 'VERBOSE' in environ and environ['VERBOSE'] == 'TRUE'
+  LOG_PREFIX_TEMPLATE = '[%Y-%m-%d %H:%M:%S] '
 
   def __init__(self, source, additional_sources=[]):
     self.news_source = fn.Yahoo(topics=source)
     self.news_source.add_topics(additional_sources)
     self.conn = None
     self.cur = None
+
+  def log(self, *args):
+    if self.SHOULD_LOG:
+      print(datetime.datetime.now().strftime(self.LOG_PREFIX_TEMPLATE), *args)
 
   def connect_to_database(self):
     self.conn = psycopg2.connect(
@@ -77,7 +90,9 @@ class Ingester:
     return new_list
   
   def get_and_store_news(self):
+    self.log('Ingester started')
     get_news_result = self.news_source.get_news()
+    self.log(f'Got {len(get_news_result)} news from source')
     if len(get_news_result) == 0:
       return
 
@@ -85,6 +100,7 @@ class Ingester:
     news_array = self.remove_duplicate_ids(get_news_result)
     del get_news_result
     gc.collect()
+    self.log(f'Left {len(news_array)} news after remove_duplicate_ids')
     if len(news_array) == 0:
       return
 
@@ -93,9 +109,11 @@ class Ingester:
         self.process_ticker(new)
       else:
         self.process_story(new)
+    self.log('Committing changes to the database')
     self.conn.commit()
 
   def cleanup(self):
+    self.log('Cleaning up resources')
     if self.cur is not None and not self.cur.closed:
       self.cur.close()
     if self.conn is not None and self.conn.closed == 0:

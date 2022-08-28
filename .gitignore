@@ -1,2 +1,3 @@
 /docker_data
 .env
+/ingester/cron.log
