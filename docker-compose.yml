@@ -7,19 +7,18 @@ services:
     volumes:
       - "./docker_data/postgresql:/var/lib/postgresql/data"
     ports:
-      - "3306:3306"
-    environment:
-      POSTGRES_PASSWORD: P@ssword!123
-      POSTGRES_USER: tospaa
-      POSTGRES_DB: enquireai
+      - "5432:5432"
+    env_file: .env
 
   ingester:
-    image: "python:3.10.6-bullseye"
+    build:
+      context: ./ingester
+      dockerfile: Dockerfile
     restart: "always"
     command: tail -f /dev/null  # keep this image running indefinitely
     volumes:
       - "./ingester:/usr/src/ingester"
-    
+    env_file: .env
 
   # ui:
   #   image: "redis:6.2.5"
@@ -32,7 +31,7 @@ services:
 
   # api:
   #   build:
-  #     context: .
+  #     context: ./api
   #     dockerfile: Dockerfile
   #   restart: always
   #   ports:
