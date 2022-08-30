@@ -1,0 +1,35 @@
+<h1>Portal</h1>
+
+<h3>EnquireAI Case Study User Interface</h3>
+
+<p-panel header="Apply filtering" [toggleable]="true" [collapsed]="true" toggler="header">
+  <p-tabView>
+    <p-tabPanel header="Filter by Words">
+      <app-filter-by-word (searchTerm)="search($event)"></app-filter-by-word>
+    </p-tabPanel>
+    <p-tabPanel header="Filter by Date">
+      <app-filter-by-date (dateFilter)="filterByDate($event)"></app-filter-by-date>
+    </p-tabPanel>
+    <p-tabPanel header="Filter by Ticker Name">
+      <app-filter-by-ticker (selected)="tickerSelected($event)"></app-filter-by-ticker>
+    </p-tabPanel>
+  </p-tabView>
+</p-panel>
+
+<div class="card">
+  <div class="flex flex-row justify-content-center flex-wrap card-container blue-container">
+    <p-card *ngFor="let item of news; index as i; trackBy: newsTrackBy" [header]="item.title"
+      [subheader]="item.summary ?? ''" [style]="{width: '360px', 'margin': '.5em'}" styleClass="p-card-shadow">
+      <ng-template pTemplate="header" *ngIf="item.img_url">
+        <img [alt]="item.title" [src]="item.img_url">
+      </ng-template>
+      <p>{{item.summary}}</p>
+      <p>Published date: {{item.published | date}}</p>
+      <ng-template pTemplate="footer">
+        <a [href]="item.link" target="_blank" rel="noopener">
+          <p-button label="Go to story" icon="pi pi-arrow-up-right"></p-button>
+        </a>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

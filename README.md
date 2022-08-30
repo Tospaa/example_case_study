@@ -20,3 +20,7 @@ Running the app is also easy. Just run the command:
 ```bash
 docker compose up -d
 ```
+
+## Schema
+
+Schema is built with the commands located in the [schema.sql](ingester/schema.sql) file.

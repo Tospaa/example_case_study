@@ -1,0 +1,11 @@
+<h5>Date selection mode</h5>
+<div class="field-radiobutton">
+  <p-radioButton name="mode" value="single" [(ngModel)]="dateMode" inputId="radiobutton-single" (onClick)="calendar.clear()"></p-radioButton>
+  <label for="radiobutton-single">Exact date</label>
+  <p-radioButton name="mode" value="range" [(ngModel)]="dateMode" inputId="radiobutton-range" (onClick)="calendar.clear()"></p-radioButton>
+  <label for="radiobutton-range">Range</label>
+</div>
+
+<p-calendar [selectionMode]="dateMode" [(ngModel)]="calendarSelection" #calendar></p-calendar>
+
+<button pButton label="Apply" (click)="applyFilter()" [disabled]="!calendarSelectionValid()"></button>

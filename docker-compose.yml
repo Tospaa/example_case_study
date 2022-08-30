@@ -9,6 +9,11 @@ services:
     ports:
       - "5432:5432"
     env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ingester:
     build:
@@ -16,27 +21,30 @@ services:
       dockerfile: Dockerfile
     restart: "always"
     env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
 
-  # ui:
-  #   image: "redis:6.2.5"
-  #   restart: "always"
-  #   volumes:
-  #     - "./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro"
-  #   ports:
-  #     - "6379:6379"
-  #   command: "redis-server /usr/local/etc/redis/redis.conf"
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    restart: "always"
+    ports:
+      - "80:80"
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
 
-  # api:
-  #   build:
-  #     context: ./api
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   ports:
-  #     - "8080:8080"
-  #     - "49558:49558"
-  #   environment:
-  #     - JAVA_ARGS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:49558 -Dfile.encoding=UTF-8
-  #     - SPRING_CONFIG=devcontainer
-  #   depends_on:
-  #     - db
-  #     - redis
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
