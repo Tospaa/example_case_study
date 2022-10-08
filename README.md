@@ -1,4 +1,4 @@
-# EnquireAI Case Study
+# Example Case Study
 
 ## Prerequisites
 

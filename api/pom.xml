@@ -11,8 +11,8 @@
 	<groupId>org.tospaa</groupId>
 	<artifactId>api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>EnquireAI Case Study API</name>
-	<description>EnquireAI Case Study API</description>
+	<name>Example Case Study API</name>
+	<description>Example Case Study API</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
